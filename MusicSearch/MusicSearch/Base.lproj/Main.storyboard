@@ -45,6 +45,9 @@
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <state key="normal" title="Search"/>
+                                        <state key="disabled">
+                                            <color key="titleColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
                                         <connections>
                                             <action selector="searchTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="o2I-yc-Qwl"/>
                                         </connections>
@@ -121,12 +124,20 @@
                                     <constraint firstItem="J2D-4g-9Dq" firstAttribute="centerY" secondItem="O3B-pQ-K8n" secondAttribute="centerY" id="aue-za-5z7"/>
                                 </constraints>
                             </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="0Kk-F5-sCD">
+                                <rect key="frame" x="87.5" y="203.5" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="JM9-WL-Jcw"/>
+                                    <constraint firstAttribute="height" constant="200" id="yWX-GX-tzr"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="O3B-pQ-K8n" firstAttribute="top" secondItem="HIj-wz-NRh" secondAttribute="bottom" constant="2" id="D8O-f7-8Aq"/>
                             <constraint firstItem="HIj-wz-NRh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="EGd-Fi-I2F"/>
                             <constraint firstAttribute="leadingMargin" secondItem="Qu7-ES-qNv" secondAttribute="leading" constant="16" id="GUI-Np-itV"/>
+                            <constraint firstItem="0Kk-F5-sCD" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-30" id="HbX-gR-Msr"/>
                             <constraint firstItem="J1R-bz-tx4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PoZ-jN-VP3"/>
                             <constraint firstAttribute="trailingMargin" secondItem="HIj-wz-NRh" secondAttribute="trailing" constant="-9" id="Rdy-8r-CgJ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="O3B-pQ-K8n" secondAttribute="trailing" constant="-8" id="VY8-hB-jEO"/>
@@ -135,12 +146,21 @@
                             <constraint firstItem="Qu7-ES-qNv" firstAttribute="top" secondItem="HIj-wz-NRh" secondAttribute="bottom" constant="60" id="eCc-br-UtH"/>
                             <constraint firstItem="J1R-bz-tx4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="p2f-ny-Dqt"/>
                             <constraint firstItem="O3B-pQ-K8n" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-8" id="pXS-fW-UWc"/>
+                            <constraint firstItem="0Kk-F5-sCD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ypP-d0-edK"/>
                             <constraint firstItem="HIj-wz-NRh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="18" id="zAy-H0-a1J"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Music Search" id="D3a-bO-sPp"/>
+                    <navigationItem key="navigationItem" title="Music Search" id="D3a-bO-sPp">
+                        <barButtonItem key="leftBarButtonItem" title="Home" id="NgW-8w-9tt">
+                            <connections>
+                                <action selector="homeTapped:" destination="BYZ-38-t0r" id="CtD-xo-0fe"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="btnSearch" destination="Yil-DP-mfa" id="VPZ-5d-cu1"/>
                         <outlet property="btnSortFilter" destination="J2D-4g-9Dq" id="ta5-P7-7os"/>
+                        <outlet property="imgPlacehOlder" destination="0Kk-F5-sCD" id="EdW-3l-ATx"/>
                         <outlet property="segVwType" destination="lrf-MD-EwF" id="Jv8-Tk-5wM"/>
                         <outlet property="txfSearch" destination="dXu-23-fQW" id="6pB-8Q-285"/>
                         <outlet property="vwCollTracks" destination="Qu7-ES-qNv" id="4Fv-ph-lUS"/>
@@ -295,4 +315,7 @@
             <point key="canvasLocation" x="136.80000000000001" y="792.95352323838085"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Placeholder" width="200" height="200"/>
+    </resources>
 </document>

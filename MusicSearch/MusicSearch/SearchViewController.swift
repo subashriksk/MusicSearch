@@ -19,7 +19,9 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
     @IBOutlet weak var vwHeader: UIView!
     @IBOutlet weak var segVwType: UISegmentedControl!
     @IBOutlet weak var btnSortFilter: UIButton!
+    @IBOutlet weak var btnSearch: UIButton!
     
+    @IBOutlet weak var imgPlacehOlder: UIImageView!
     var layout = UICollectionViewFlowLayout.init()
     var dataSource:NSMutableArray = []
     var isInListView:Bool = false
@@ -30,7 +32,8 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
         
         //make the keypad visible during the startup
         txfSearch.becomeFirstResponder()
-        
+        btnSearch.isEnabled = false
+
         initializeCollectionView()
     }
     
@@ -40,31 +43,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
     called out when the serach button is tapped
      */
     @IBAction func searchTapped(_ sender: Any) {
-        
-        txfSearch.resignFirstResponder()
-        vwLoading.startAnimating()
-        view.bringSubview(toFront: vwLoading)
-        
-        btnSortFilter.layer.cornerRadius = 3.0
-        btnSortFilter.layer.borderWidth = 1.0
-        btnSortFilter.layer.borderColor = UIColor.init(colorLiteralRed: 70/255, green: 114/255, blue: 197/255, alpha: 1).cgColor
-        MusicHelper.getTracksForKeyword(strKeyword: txfSearch.text!) { (succeeded, result) in
-            DispatchQueue.main.async {
-                self.vwLoading.stopAnimating()
-                if succeeded{
-                    print("Suceeded")
-                    //refresh teh view with new tracks
-                    self.dataSource.removeAllObjects()
-                    self.dataSource.addObjects(from: (result as! MusicResults).results)
-                    self.vwCollTracks.isHidden = false
-                    self.vwHeader.isHidden = false
-                    self.vwCollTracks.reloadData()
-                }
-                else{
-                    print("Failed")
-                }
-            }
-        }
+        performSearch()
     }
     
     /*
@@ -86,6 +65,50 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
         let actionOk = UIAlertAction.init(title: "OK", style: .default, handler: nil)
         alert.addAction(actionOk)
         present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func homeTapped(_ sender: Any) {
+        clearAndGoHome()
+    }
+    
+    func performSearch(){
+        txfSearch.resignFirstResponder()
+        vwLoading.startAnimating()
+        view.bringSubview(toFront: vwLoading)
+        
+        btnSortFilter.layer.cornerRadius = 3.0
+        btnSortFilter.layer.borderWidth = 1.0
+        btnSortFilter.layer.borderColor = UIColor.init(colorLiteralRed: 70/255, green: 114/255, blue: 197/255, alpha: 1).cgColor
+        MusicHelper.getTracksForKeyword(strKeyword: txfSearch.text!) { (succeeded, result) in
+            DispatchQueue.main.async {
+                self.vwLoading.stopAnimating()
+                if succeeded{
+                    print("Suceeded")
+                    //refresh teh view with new tracks
+                    self.dataSource.removeAllObjects()
+                    self.dataSource.addObjects(from: (result as! MusicResults).results)
+                    self.vwCollTracks.isHidden = false
+                    self.vwHeader.isHidden = false
+                    self.imgPlacehOlder.isHidden = true
+                    self.vwCollTracks.reloadData()
+                }
+                else{
+                    print("Failed")
+                }
+            }
+        }
+    }
+    
+    /*
+    clear the view and make it as initial view
+     */
+    func clearAndGoHome(){
+        vwCollTracks.isHidden = true
+        vwHeader.isHidden = true
+        imgPlacehOlder.isHidden = false
+        txfSearch.text = ""
+        btnSearch.isEnabled = false
+        txfSearch.becomeFirstResponder()
     }
     
     /*
@@ -148,6 +171,24 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        performSearch()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let strExisting = textField.text as NSString?
+        let strReplacement = strExisting?.replacingCharacters(in: range, with: string)
+        if (strReplacement?.characters.count)! == 0{
+            clearAndGoHome()
+        }
+        else{
+            btnSearch.isEnabled = true
+        }
+        return true
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        clearAndGoHome()
         return true
     }
     
