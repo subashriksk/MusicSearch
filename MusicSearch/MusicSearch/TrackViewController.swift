@@ -16,6 +16,7 @@ class TrackViewController: UIViewController {
     @IBOutlet weak var lblArtist: UILabel!
     @IBOutlet weak var lblAlbum: UILabel!
     @IBOutlet weak var lblLyrics: UILabel!
+    @IBOutlet weak var lblGenre: UILabel!
     @IBOutlet weak var btnMoreDetails: UIButton!
     @IBOutlet weak var vwLoading: UIActivityIndicatorView!
     var track:MusicTrack?
@@ -24,10 +25,11 @@ class TrackViewController: UIViewController {
         super.viewDidLoad()
 
         //Price units can be added based on the currency
-        lblPrice.text =  String(format:"%.2f", (track?.trackPrice)!)
-        lblTrack.text = track!.trackName
-        lblArtist.text = track!.artistName
-        lblAlbum.text = track!.collectionName
+        lblPrice.text =  "$" + String(format:"%.2f", (track?.trackPrice)!)
+        lblTrack.text = "Track: "+track!.trackName!
+        lblArtist.text = "Artist: "+track!.artistName!
+        lblAlbum.text = "Album: "+track!.collectionName!
+        lblGenre.text = "Genre: \n"+track!.primaryGenreName!
 
         //load the image from the url
         DispatchQueue.global(qos: .background).async {
@@ -48,7 +50,14 @@ class TrackViewController: UIViewController {
                     print("Suceeded")
                     
                     //refresh teh view with lyrics
-                    self.lblLyrics.text = lyrics
+                    if lyrics == "Not found"{
+                        self.lblLyrics.text = "Lyrics not found in Wiki for this track"
+                        self.lblLyrics.textColor = UIColor.red
+                    }
+                    else{
+                        self.lblLyrics.text = lyrics
+                        self.lblLyrics.textColor = UIColor.black
+                    }
                 }
                 else{
                     print("Failed")
@@ -62,7 +71,10 @@ class TrackViewController: UIViewController {
     called out when the more details button is tapped
     */
     @IBAction func moreDetailsTapped(_ sender: Any) {
-        UIApplication.shared.open(NSURL(string: (track?.trackViewUrl)!) as! URL, options: [:], completionHandler: nil)
+        
+        //this will work only in the device due to itunes redirection in safari
+        let url = NSURL(string: (track?.trackViewUrl)!) as! URL
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 
 }

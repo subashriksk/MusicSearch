@@ -84,4 +84,9 @@ class MusicTrack: NSObject {
             releaseDate = formatter.date(from:date) as NSDate?
         }
     }
+    
+    func sortTrackArrayBy(strBy:String){
+        
+    }
+    
 }

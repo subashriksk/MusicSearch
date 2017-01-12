@@ -3,9 +3,10 @@ Only Portait
 iPhone and iPad
 Optimized for 4.7 Inch iPhone screen
 List and Grid view
+Sorting the search results
 
 Can be done:
-Sort and Filter Functionality with the results
+Filter Functionality with the results
 Making the Track VC to use scrollview to accomodate the lyrics if longer the screen or using UITextView to hold multiline data
 Price in TrackVC can be displayed along with the units
 Support for Landscape

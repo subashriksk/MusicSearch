@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
+class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, UIPickerViewDelegate, UIPickerViewDataSource {
    
     let screenWidth = UIScreen.main.bounds.size.width
     let screenHeight = UIScreen.main.bounds.size.height
@@ -20,13 +20,20 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
     @IBOutlet weak var segVwType: UISegmentedControl!
     @IBOutlet weak var btnSortFilter: UIButton!
     @IBOutlet weak var btnSearch: UIButton!
-    
     @IBOutlet weak var imgPlacehOlder: UIImageView!
+    @IBOutlet weak var vwPicker: UIView!
+    @IBOutlet weak var pickerSort: UIPickerView!
+    
     var layout = UICollectionViewFlowLayout.init()
     var dataSource:NSMutableArray = []
+    var arrResults:NSMutableArray = []
+    var arrSortOptions:NSMutableArray = ["Relevance","Kind", "Artist Name","Track Name"]
+    var arrSortCode:NSMutableArray = ["","kind", "artistName", "trackName"]
+
     var isInListView:Bool = false
     var selectedTrack:MusicTrack?
-
+    var selectedSortIndex = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,14 +68,29 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
     
     @IBAction func sortAndFilterTapped(_ sender: Any) {
         
-       let alert = UIAlertController.init(title: "To be implemented", message: "This will allow the user to sort and refine the results from the search", preferredStyle: UIAlertControllerStyle.alert)
-        let actionOk = UIAlertAction.init(title: "OK", style: .default, handler: nil)
-        alert.addAction(actionOk)
-        present(alert, animated: true, completion: nil)
+        vwPicker.isHidden = false
+        view.bringSubview(toFront: vwPicker)
+        pickerSort.reloadAllComponents()
+
     }
     
     @IBAction func homeTapped(_ sender: Any) {
         clearAndGoHome()
+    }
+    
+    @IBAction func pickerDoneTapped(_ sender: Any) {
+        vwPicker.isHidden = true
+        dataSource.removeAllObjects()
+
+        if selectedSortIndex == 0{
+            dataSource = arrResults
+        }
+        else{
+             let arrSorted = (arrResults as NSArray).sortedArray(using: [
+                NSSortDescriptor(key: arrSortCode.object(at: selectedSortIndex) as? String, ascending: true)])
+            dataSource.addObjects(from: arrSorted)
+        }
+        vwCollTracks.reloadData()
     }
     
     func performSearch(){
@@ -86,11 +108,23 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
                     print("Suceeded")
                     //refresh teh view with new tracks
                     self.dataSource.removeAllObjects()
+                    self.arrResults.removeAllObjects()
                     self.dataSource.addObjects(from: (result as! MusicResults).results)
-                    self.vwCollTracks.isHidden = false
-                    self.vwHeader.isHidden = false
-                    self.imgPlacehOlder.isHidden = true
-                    self.vwCollTracks.reloadData()
+                    self.arrResults.addObjects(from: (result as! MusicResults).results)
+                    
+                    //display the collection view only if has the track results
+                    if self.dataSource.count > 0{
+                        self.vwCollTracks.isHidden = false
+                        self.vwHeader.isHidden = false
+                        self.imgPlacehOlder.isHidden = true
+                        self.vwCollTracks.reloadData()
+                    }
+                    else{
+                        let alert = UIAlertController.init(title: "No Tracks", message: "Try searching with different keywords.", preferredStyle: UIAlertControllerStyle.alert)
+                        let actionOk = UIAlertAction.init(title: "OK", style: .default, handler: nil)
+                        alert.addAction(actionOk)
+                        self.present(alert, animated: true, completion: nil)
+                    }
                 }
                 else{
                     print("Failed")
@@ -131,7 +165,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
         vwCollTracks.isHidden = true
     }
     
-    //MARK: Collection view delegates
+    //MARK: Collection view methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
@@ -197,5 +231,23 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UICollectionV
         let trackVc:TrackViewController = segue.destination as! TrackViewController
         trackVc.track = selectedTrack
     }
+    
+    //MARK: Picker view methods
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return arrSortOptions.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return arrSortOptions.object(at: row) as? String
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        selectedSortIndex = row
+    }
+    
 }
 
